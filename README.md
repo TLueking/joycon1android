@@ -1,3 +1,8 @@
+> **Joycon1Android** is a fork of [Joycon2Android](https://github.com/JoeGeC/joycon2android) by JoeGeC
+> that adds Switch 1 Joy-Cons and Pro Controllers. Pair them in Android's Bluetooth settings, start
+> Shizuku, then tap Scan; hold **L** on one Joy-Con and **R** on the other to make them one player.
+> Needs a kernel with `hid-nintendo`. Details: [docs/switch1.md](docs/switch1.md).
+
 # Joycon2Android
 
 [![Latest release](https://img.shields.io/github/v/release/JoeGeC/joycon2android)](../../releases/latest)

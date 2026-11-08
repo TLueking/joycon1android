@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.joegec.joycon2android"
+        applicationId = "com.tlueking.joycon1android"
         minSdk = 24
         targetSdk = 36
         versionCode = 15

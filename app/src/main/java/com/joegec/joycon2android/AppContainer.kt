@@ -571,7 +571,7 @@ class AppContainer(context: Context) {
     }
 
     private companion object {
-        const val GITHUB_REPOSITORY = "JoeGeC/joycon2android"
+        const val GITHUB_REPOSITORY = "TLueking/joycon1android"
         const val UPDATE_CACHE_DIRECTORY = "updates"
     }
 }
