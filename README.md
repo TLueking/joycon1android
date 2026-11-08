@@ -43,12 +43,36 @@ Switch 2 controllers still work too.
 |---|---|
 | ✅ All buttons and both analog sticks, calibrated | ✅ Two Joy-Cons as one controller (Pro Controller supported but untested) |
 | ✅ Button mapping, layouts, multiple players | ✅ Low latency (input is read straight from the kernel) |
-| ✅ ⏻ on a player card turns its controllers off | |
+| ✅ Turn controllers off from the app ([how](#turning-your-joy-cons-off)) | |
 | ❌ Motion / gyro | ❌ Rumble |
 | ❌ Battery level and player lights | ❌ SL / SR, so a single sideways Joy-Con has no shoulder buttons |
 
 The missing features are limits of the kernel driver on current phones, not of the app. How it works:
 [docs/switch1.md](docs/switch1.md).
+
+### Turning your Joy-Cons off
+
+Joy-Cons paired with a phone don't turn off when you stop playing. They stay connected and keep
+draining their battery, even in a bag. Joycon1Android turns them
+off for you, the same way a Switch does. Their lights go out and they go to sleep.
+
+| From | Tap | Turns off |
+|---|---|---|
+| A player card | **⏻** next to the ✕ | That player's controllers: both Joy-Cons of a pair, or the Pro Controller |
+| The bottom of the main screen | **Disconnect All** | Every connected controller |
+| The app's notification | **Disconnect All** | Every connected controller, without opening the app |
+| An unassigned controller | **✕** | That controller |
+
+To use them again, press any button on a Joy-Con. It wakes and reconnects to the phone like it would
+to a Switch, with no re-pairing, as long as Bluetooth is on.
+
+Good to know:
+
+- Turning off works without Shizuku; it only needs the Bluetooth permission the app already has.
+- If you've connected two Joy-Cons of the same side, the ⏻ and ✕ buttons can't tell them apart and
+  won't turn either off. **Disconnect All** still turns off both.
+- If the app says it couldn't turn a controller off, disconnect it in Android's Bluetooth settings
+  (tap the gear next to it, then **Disconnect**).
 
 ---
 
