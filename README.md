@@ -10,12 +10,17 @@ the original Nintendo Switch 1 Joy-Cons and Pro Controller.**
 Pair two Switch 1 Joy-Cons and they become **one controller** that every Android app sees as an
 ordinary gamepad: games, emulators, and streaming apps like Shadow PC. Everything else comes from
 Joycon2Android unchanged: player assignment, button mapping, the Output card and emulator setup.
-Switch 2 controllers still work too.
 
 > [!NOTE]
 > This is an independent fork, not an official Joycon2Android release. Please report Switch 1 issues
 > here, not to the original project. If you find this useful, consider
 > [supporting the original author](https://ko-fi.com/joestechprojects).
+
+> [!WARNING]
+> **Switch 2 controllers are untested in this fork.** Joycon2Android's Switch 2 support (Joy-Con 2,
+> the Switch 2 Pro Controller and NSO GameCube controllers) is still included and unchanged, but it
+> hasn't been tried since the Switch 1 changes. If you only use Switch 2 controllers, use
+> [Joycon2Android](https://github.com/JoeGeC/joycon2android) itself.
 
 ## Switch 1 quick start
 
@@ -82,7 +87,8 @@ Good to know:
 ---
 
 *The rest of this README is the original Joycon2Android guide. It describes the shared features and
-Switch 2 setup, and applies to this fork as well.*
+Switch 2 setup. The shared features apply to this fork as well; the Switch 2 parts are
+[untested here](#switch-1-quick-start).*
 
 ## Features
 
