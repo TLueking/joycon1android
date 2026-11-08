@@ -87,6 +87,19 @@ class Joycon1ManagerTest {
         awaitTrue { turnedOff == listOf(EvdevProduct.JOYCON_LEFT) }
     }
 
+    @Test
+    fun `disconnect all keeps grabbing, so a woken Joy-Con comes back unassigned`() {
+        relay("A 7 2006 - Left")
+        awaitController { it.isNotEmpty() }
+
+        manager.disconnectAll()
+        assertTrue(manager.controllers.value.isEmpty())
+        relay("R 7", "A 9 2006 - Left")
+
+        awaitController { it.size == 1 }
+        assertTrue(stream.open)
+    }
+
     private fun awaitTrue(condition: () -> Boolean) {
         val deadline = System.currentTimeMillis() + 2_000
         while (!condition()) {
@@ -110,7 +123,13 @@ class Joycon1ManagerTest {
     }
 
     private class FakeStream(override val input: InputStream) : EvdevStream {
-        override fun close() = input.close()
+        @Volatile
+        var open = true
+
+        override fun close() {
+            open = false
+            input.close()
+        }
     }
 
     private class FakeTypePreferences : ControllerTypePreferences {

@@ -3,6 +3,7 @@ package com.joegec.joycon2android
 import android.content.Context
 import android.os.SystemClock
 import com.joegec.joycon2android.connection.CombinedControllers
+import com.joegec.joycon2android.connection.UnassignedTimeout
 import com.joegec.joycon2android.connection.ConnectionPriorityRepository
 import com.joegec.joycon2android.connection.ControllerRepository
 import com.joegec.joycon2android.connection.ControllerTypePreferencesDataStore
@@ -184,6 +185,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import java.io.File
 
 /** Composition root: docs/architecture.md#composition-root--appcontainer */
@@ -492,6 +495,21 @@ class AppContainer(context: Context) {
         )
     )
 
+    // --- Switch 1 controllers left unassigned go back to sleep: docs/switch1.md#auto-sleep ---
+    @Volatile
+    private var unassignedAddresses: Set<String> = emptySet()
+    private val unassignedTimeout = UnassignedTimeout(UNASSIGNED_SLEEP_MS, SystemClock::elapsedRealtime)
+
+    init {
+        scope.launch {
+            while (true) {
+                delay(UNASSIGNED_CHECK_MS)
+                val switch1 = joycon1Manager.controllers.value.mapTo(mutableSetOf()) { it.address }
+                unassignedTimeout.due(unassignedAddresses intersect switch1).forEach(joycon1Manager::disconnect)
+            }
+        }
+    }
+
     // --- Session (cross-feature coordinator) ---
     private val sessionCoordinator = SessionCoordinator(
         scope = scope,
@@ -500,6 +518,7 @@ class AppContainer(context: Context) {
         resolver = PlayerStateResolver(evictConflicting = assignmentRepository::unassign),
         comboDetector = ComboAssignmentDetector(),
         onState = { state ->
+            unassignedAddresses = state.unassignedJoycons.mapTo(mutableSetOf()) { it.address }
             activeBodies.value = state.activePlayers.mapNotNull { it.body() }
             activePlayers = state.activePlayers
             hasActivePlayers.value = state.activePlayers.isNotEmpty()
@@ -589,6 +608,8 @@ class AppContainer(context: Context) {
 
     private companion object {
         const val GITHUB_REPOSITORY = "TLueking/joycon1android"
+        const val UNASSIGNED_SLEEP_MS = 2 * 60_000L
+        const val UNASSIGNED_CHECK_MS = 15_000L
         const val UPDATE_CACHE_DIRECTORY = "updates"
     }
 }

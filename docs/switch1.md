@@ -69,7 +69,7 @@ The driver applies factory calibration and reports ±32767, up negative. `EvdevS
 
 The ⏻ button on a player card, **Disconnect** on an unassigned controller and **Disconnect all**
 put Switch 1 controllers to sleep, as a Switch does. A button press wakes one and it reconnects to the
-phone without re-pairing (expected; not yet confirmed on hardware).
+phone without re-pairing (Pixel 3a, Android 12, 2026-11-08).
 
 | Class | Module | Role |
 |---|---|---|
@@ -90,6 +90,18 @@ helps where Shizuku runs as root. `app_process` as shell can't bind the service 
 evdev doesn't expose the Bluetooth address, so the device is matched by its advertised name
 (`EvdevProduct.bluetoothName`). With two of the same type connected, a single turn-off refuses and
 says so; **Disconnect all** sends to both.
+
+## Auto-sleep
+
+A Switch 1 controller that stays unassigned for 2 minutes gets the sleep command again, so one woken
+by a bump in a bag turns itself back off. `UnassignedTimeout` (`:feature:connection:domain`) tracks
+how long each address has been unassigned; `AppContainer` checks it every 15 s against the session's
+unassigned controllers that `Joycon1Manager` owns. Switch 2 controllers are left alone: they can't
+be woken by a button.
+
+**Disconnect All** keeps the relay running, so a controller that wakes afterwards is still grabbed:
+it shows up unassigned and moves nothing on screen. Only the app's process ending stops the relay,
+and then Android gets the controllers' input again.
 
 ## Not available
 

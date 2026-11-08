@@ -66,6 +66,11 @@ off for you, the same way a Switch does. Their lights go out and they go to slee
 To use them again, press any button on a Joy-Con. It wakes and reconnects to the phone like it would
 to a Switch, with no re-pairing, as long as Bluetooth is on.
 
+**Bumped in a bag?** A Joy-Con that wakes by accident does nothing on screen while the app is
+running: it shows up unassigned, and an unassigned controller sends no input to Android. If it stays
+unassigned for 2 minutes, the app turns it off again. This needs the app (and Shizuku) running; if
+Android has closed the app, a woken Joy-Con acts as a normal Android controller.
+
 Good to know:
 
 - Turning off works without Shizuku; it only needs the Bluetooth permission the app already has.
