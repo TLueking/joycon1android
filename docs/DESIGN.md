@@ -106,7 +106,8 @@ In `JoyconScreen.kt`:
   no gap and content passes behind the status bar. Screens add its height plus the status-bar
   inset as top clearance.
 - **Settings behind a gear.** The app bar's only action opens the settings panel, an `EndDrawer`
-  from the right so it sits under the icon that opened it. The Ko-fi banner sits under the panel title.
+  from the right so it sits under the icon that opened it. The Ko-fi banner sits under the panel title,
+  shown by default; **Show Ko-fi banner** in the panel hides it.
 - **The type label is the type menu.** An unassigned controller's type at the top of its card opens
   a `PanelDropdownMenu`: Detect automatically first, sub-labelled with what was detected, then the
   four types. A manual choice shows `SET MANUALLY` beside the label. Only an unrecognised controller
