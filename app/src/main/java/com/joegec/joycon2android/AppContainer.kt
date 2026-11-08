@@ -16,7 +16,10 @@ import com.joegec.joycon2android.connection.StopScanUseCase
 import com.joegec.joycon2android.connection.ViewModePreferences
 import com.joegec.joycon2android.connection.ViewModePreferencesDataStore
 import com.joegec.joycon2android.connection.evdev.Joycon1Manager
+import com.joegec.joycon2android.connection.evdev.Joycon1Messages
 import com.joegec.joycon2android.evdev.ShellEvdevRelayLauncher
+import com.joegec.joycon2android.evdev.HidHostDisconnector
+import com.joegec.joycon2android.connection.data.R as ConnectionDataR
 import com.joegec.joycon2android.androidkeys.AndroidKeyRouter
 import com.joegec.joycon2android.androidkeys.DeviceKeysPause
 import com.joegec.joycon2android.androidkeys.HeldKeyRouter
@@ -197,7 +200,11 @@ class AppContainer(context: Context) {
         scope,
         ShellEvdevRelayLauncher(appContext, privilegedAccess::acquire, privilegedAccess::readyShell),
         controllerTypePreferences,
-        appContext.getString(com.joegec.joycon2android.connection.data.R.string.error_switch1_needs_shizuku),
+        HidHostDisconnector(appContext) { privilegedAccess.readyShell() != null },
+        Joycon1Messages(
+            shizukuMissing = appContext.getString(ConnectionDataR.string.error_switch1_needs_shizuku),
+            turnOffFailed = appContext.getString(ConnectionDataR.string.error_switch1_turn_off_failed),
+        ),
     )
     val controllerRepository: ControllerRepository = CombinedControllers(scope, listOf(joycon2Manager, joycon1Manager))
     private val connectionPriorityRepository: ConnectionPriorityRepository = joycon2Manager

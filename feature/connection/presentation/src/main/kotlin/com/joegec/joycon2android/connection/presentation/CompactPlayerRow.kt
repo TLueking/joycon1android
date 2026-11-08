@@ -36,6 +36,7 @@ fun CompactPlayerRow(
     playerState: PlayerState,
     onUnassign: (String) -> Unit,
     onRemovePlayer: () -> Unit,
+    onTurnOff: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -71,6 +72,7 @@ fun CompactPlayerRow(
                 }
             }
         }
+        TurnOffButton(onTurnOff)
         Icon(
             Icons.Filled.Close,
             contentDescription = stringResource(R.string.remove_player),

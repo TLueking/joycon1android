@@ -119,6 +119,7 @@ dependencies {
     implementation(project(":feature:output:domain"))
     implementation(project(":feature:output:data"))
     implementation(project(":feature:output:presentation"))
+    implementation(libs.hiddenapibypass)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

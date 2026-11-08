@@ -65,6 +65,32 @@ assignment combo doesn't fire. L + R across a pair does.
 The driver applies factory calibration and reports ±32767, up negative. `EvdevStick` maps to the app's
 0–4095 with up high, through a 12% radial deadzone: one Joy-Con rested at 3302 (10%) after release.
 
+## Turning off
+
+The ⏻ button on a player card, **Disconnect** on an unassigned controller and **Disconnect all**
+put Switch 1 controllers to sleep, as a Switch does. A button press wakes one and it reconnects to the
+phone without re-pairing (expected; not yet confirmed on hardware).
+
+| Class | Module | Role |
+|---|---|---|
+| `EvdevDisconnector` | `:feature:connection:data` | What `Joycon1Manager` calls per product |
+| `HidHostDisconnector` | `:app` | Sends the sleep command; falls back to a disconnect through Shizuku |
+
+**Sleep command.** `BluetoothHidHost.sendData` (hidden, reached by reflection) with the app's own
+`BLUETOOTH_CONNECT` sends output report `01 00 00014040 00014040 06 00`: packet 0, neutral rumble,
+subcommand `0x06` (set HCI state) `0x00` (disconnect). The controller drops the link itself. Worked on a
+Pixel 3a (Android 12), both Joy-Cons, 2026-11-08.
+
+**Disconnect fallback.** The HID host's `disconnect` needs `BLUETOOTH_PRIVILEGED`, which shell lacks
+(`Neither user 2000 nor current process has android.permission.BLUETOOTH_PRIVILEGED`, same device).
+It's called through `ShizukuBinderWrapper` with a `com.android.shell` `AttributionSource`, so it only
+helps where Shizuku runs as root. `app_process` as shell can't bind the service at all
+(`Unable to find app for caller`).
+
+evdev doesn't expose the Bluetooth address, so the device is matched by its advertised name
+(`EvdevProduct.bluetoothName`). With two of the same type connected, a single turn-off refuses and
+says so; **Disconnect all** sends to both.
+
 ## Not available
 
 No motion (this driver version creates no IMU node), rumble (no `FF_RUMBLE`) or battery. Player LEDs
