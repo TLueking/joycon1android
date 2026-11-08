@@ -1,22 +1,58 @@
-> **Joycon1Android** is a fork of [Joycon2Android](https://github.com/JoeGeC/joycon2android) by JoeGeC
-> that adds Switch 1 Joy-Cons and Pro Controllers. Pair them in Android's Bluetooth settings, start
-> Shizuku, then tap Scan; hold **L** on one Joy-Con and **R** on the other to make them one player.
-> Needs a kernel with `hid-nintendo`. Details: [docs/switch1.md](docs/switch1.md).
+# Joycon1Android
 
-# Joycon2Android
+[![Latest release](https://img.shields.io/github/v/release/TLueking/joycon1android)](../../releases/latest)
+[![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android&logoColor=white)](#what-you-need-for-switch-1)
+[![License: GPL-3.0](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
-[![Latest release](https://img.shields.io/github/v/release/JoeGeC/joycon2android)](../../releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/JoeGeC/joycon2android/total?cacheSeconds=3600)](../../releases)
-[![Android 7.0+](https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android&logoColor=white)](#what-you-need)
-[![License: GPL-3.0](https://img.shields.io/github/license/JoeGeC/joycon2android)](LICENSE)
-[![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/joestechprojects)
+**Joycon1Android is [Joycon2Android](https://github.com/JoeGeC/joycon2android) by JoeGeC, backported to
+the original Nintendo Switch 1 Joy-Cons and Pro Controller.**
 
-Use Nintendo Switch 2 **Joy-Con 2** and **Pro Controllers** on Android — as gamepads in any app, and
-with motion in emulators.
+Pair two Switch 1 Joy-Cons and they become **one controller** that every Android app sees as an
+ordinary gamepad: games, emulators, and streaming apps like Shadow PC. Everything else comes from
+Joycon2Android unchanged: player assignment, button mapping, the Output card and emulator setup.
+Switch 2 controllers still work too.
 
-Android can't pair these controllers from its Bluetooth settings, because they use their own BLE
-protocol rather than standard HID. Joycon2Android connects to them itself and presents each player
-as an ordinary gamepad.
+> [!NOTE]
+> This is an independent fork, not an official Joycon2Android release. Please report Switch 1 issues
+> here, not to the original project. If you find this useful, consider
+> [supporting the original author](https://ko-fi.com/joestechprojects).
+
+## Switch 1 quick start
+
+### What you need for Switch 1
+
+- An Android device whose kernel includes the `hid-nintendo` driver. Check with
+  `adb shell getevent -il` once a Joy-Con is paired: it should be named
+  **"Nintendo Switch Left Joy-Con"** (or Right), not a generic gamepad. Tested on a Pixel 3a (Android 12).
+- [Shizuku](https://shizuku.rikka.app/), running. Root isn't needed.
+- Switch 1 Joy-Cons (L and R) or a Switch 1 Pro Controller.
+
+### Connect
+
+1. Pair each Joy-Con in Android's **Bluetooth settings**: hold the small SYNC button on its rail until
+   the lights run, then tap it in the list. Unlike Switch 2 controllers, they pair through Android,
+   not the app.
+2. Open Joycon1Android, tap **Scan**, and grant Shizuku access.
+3. Hold **L** on the left Joy-Con and **R** on the right one at the same time. They become one player.
+4. The **Output** card turns on the virtual gamepad. Pick **Android games & apps** for games and
+   streaming apps.
+
+### What works with Switch 1
+
+| | |
+|---|---|
+| ✅ All buttons and both analog sticks, calibrated | ✅ Two Joy-Cons as one controller (Pro Controller supported but untested) |
+| ✅ Button mapping, layouts, multiple players | ✅ Low latency (input is read straight from the kernel) |
+| ❌ Motion / gyro | ❌ Rumble |
+| ❌ Battery level and player lights | ❌ SL / SR, so a single sideways Joy-Con has no shoulder buttons |
+
+The missing features are limits of the kernel driver on current phones, not of the app. How it works:
+[docs/switch1.md](docs/switch1.md).
+
+---
+
+*The rest of this README is the original Joycon2Android guide. It describes the shared features and
+Switch 2 setup, and applies to this fork as well.*
 
 ## Features
 
@@ -370,6 +406,9 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md), then the [docs](docs/README.md):
 - [Debug tools](tools/README.md) — a DSU client for inspecting the stream
 
 ## Credits
+
+Joycon1Android is built on [Joycon2Android](https://github.com/JoeGeC/joycon2android) by JoeGeC and its
+contributors below. The Switch 1 support reads the Linux `hid-nintendo` driver, written by Daniel J. Ogorchock.
 
 ### Contributors
 
