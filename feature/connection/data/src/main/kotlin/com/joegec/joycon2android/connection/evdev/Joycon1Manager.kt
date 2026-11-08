@@ -25,7 +25,8 @@ class Joycon1Manager(
     private val scope: CoroutineScope,
     private val launcher: EvdevRelayLauncher,
     private val typePreferences: ControllerTypePreferences,
-    private val shizukuMissingMessage: String,
+    private val disconnector: EvdevDisconnector,
+    private val messages: Joycon1Messages,
 ) : ControllerRepository {
 
     private val typeOverrides = typePreferences.overrides.stateIn(scope, SharingStarted.Eagerly, emptyMap())
@@ -65,11 +66,16 @@ class Joycon1Manager(
     }
 
     override fun disconnect(address: String) {
-        synchronized(lock) { hidden += address }
+        val product = synchronized(lock) {
+            hidden += address
+            bySlot.values.firstOrNull { it.address == address }?.product
+        }
         rebuild()
+        product?.let { turnOff(listOf(it), everyMatch = false) }
     }
 
     override fun disconnectAll() {
+        turnOff(synchronized(lock) { bySlot.values.map { it.product } }, everyMatch = true)
         stream?.close()
         stream = null
         synchronized(lock) {
@@ -94,6 +100,15 @@ class Joycon1Manager(
         _error.value = message
     }
 
+    // Hidden first, so the card goes at once; the relay's removal follows when the link drops.
+    private fun turnOff(products: List<EvdevProduct>, everyMatch: Boolean) {
+        if (products.isEmpty()) return
+        thread(name = "evdev-turn-off", isDaemon = true) {
+            val failed = products.distinct().filterNot { disconnector.disconnect(it, everyMatch) }
+            if (failed.isNotEmpty()) _error.value = messages.turnOffFailed
+        }
+    }
+
     private fun start(prompt: Boolean) {
         if (stream != null || starting) return
         starting = true
@@ -107,7 +122,7 @@ class Joycon1Manager(
                     stream = started
                     thread(name = "evdev-relay", isDaemon = true) { read(started) }
                 }
-                prompt -> _error.value = shizukuMissingMessage
+                prompt -> _error.value = messages.shizukuMissing
             }
         }
     }

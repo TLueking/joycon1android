@@ -32,6 +32,7 @@ fun PlayerView(
     liveInputs: StateFlow<Map<String, JoyconInput>>,
     onUnassign: (String) -> Unit,
     onRemovePlayer: () -> Unit,
+    onTurnOff: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth()) {
@@ -50,6 +51,7 @@ fun PlayerView(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
+            TurnOffButton(onTurnOff)
             Icon(
                 Icons.Filled.Close,
                 contentDescription = stringResource(R.string.remove_player),

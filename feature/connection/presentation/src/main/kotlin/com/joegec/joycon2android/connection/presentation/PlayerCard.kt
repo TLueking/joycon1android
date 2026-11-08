@@ -27,6 +27,7 @@ fun PlayerCard(
     viewMode: ConnectionViewMode,
     onUnassign: (String) -> Unit,
     onRemovePlayer: () -> Unit,
+    onTurnOff: () -> Unit,
     modifier: Modifier = Modifier,
     detailedModifier: Modifier = Modifier,
 ) {
@@ -43,12 +44,14 @@ fun PlayerCard(
                 liveInputs = liveInputs,
                 onUnassign = onUnassign,
                 onRemovePlayer = onRemovePlayer,
+                onTurnOff = onTurnOff,
                 modifier = detailedModifier,
             )
             ConnectionViewMode.COMPACT -> CompactPlayerRow(
                 playerState = playerState,
                 onUnassign = onUnassign,
                 onRemovePlayer = onRemovePlayer,
+                onTurnOff = onTurnOff,
             )
         }
     }

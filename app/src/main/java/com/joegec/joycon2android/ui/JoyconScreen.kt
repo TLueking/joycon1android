@@ -493,6 +493,7 @@ private fun ConnectedContent(
                         viewMode = viewMode,
                         onUnassign = onUnassign,
                         onRemovePlayer = { onRemovePlayer(playerState) },
+                        onTurnOff = { playerState.addresses().forEach(onDisconnect) },
                         modifier = Modifier.weight(1f),
                         detailedModifier = Modifier.scaleLayout(LandscapePlayerScale),
                     )
@@ -508,6 +509,7 @@ private fun ConnectedContent(
                 viewMode = viewMode,
                 onUnassign = onUnassign,
                 onRemovePlayer = { onRemovePlayer(playerState) },
+                onTurnOff = { playerState.addresses().forEach(onDisconnect) },
             )
         }
     }
@@ -562,3 +564,5 @@ private fun ConnectedContent(
 }
 
 private enum class ScreenState { IDLE, SCANNING, CONNECTED }
+
+private fun PlayerState.addresses(): List<String> = listOfNotNull(left, right).map { it.address }.distinct()

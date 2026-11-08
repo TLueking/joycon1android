@@ -24,8 +24,10 @@ class Joycon1ManagerTest {
         CoroutineScope(Dispatchers.Unconfined),
         { _, onResult -> onResult(stream) },
         FakeTypePreferences(),
-        "needs shizuku",
+        { product, _ -> turnedOff += product; true },
+        Joycon1Messages("needs shizuku", "turn off failed"),
     )
+    private val turnedOff = java.util.concurrent.CopyOnWriteArrayList<EvdevProduct>()
 
     @After
     fun closeRelay() = relayOutput.close()
@@ -73,6 +75,24 @@ class Joycon1ManagerTest {
 
         val addresses = awaitController { it.size == 2 }.map { it.address }
         assertEquals(listOf("switch1-joycon_right", "switch1-joycon_right-2"), addresses)
+    }
+
+    @Test
+    fun `disconnecting a Joy-Con turns off its type`() {
+        relay("A 7 2006 - Left")
+        awaitController { it.isNotEmpty() }
+
+        manager.disconnect("switch1-joycon_left")
+
+        awaitTrue { turnedOff == listOf(EvdevProduct.JOYCON_LEFT) }
+    }
+
+    private fun awaitTrue(condition: () -> Boolean) {
+        val deadline = System.currentTimeMillis() + 2_000
+        while (!condition()) {
+            if (System.currentTimeMillis() > deadline) throw AssertionError("Timed out")
+            Thread.sleep(10)
+        }
     }
 
     private fun relay(vararg lines: String) {

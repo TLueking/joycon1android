@@ -43,6 +43,7 @@ Switch 2 controllers still work too.
 |---|---|
 | ✅ All buttons and both analog sticks, calibrated | ✅ Two Joy-Cons as one controller (Pro Controller supported but untested) |
 | ✅ Button mapping, layouts, multiple players | ✅ Low latency (input is read straight from the kernel) |
+| ✅ ⏻ on a player card turns its controllers off | |
 | ❌ Motion / gyro | ❌ Rumble |
 | ❌ Battery level and player lights | ❌ SL / SR, so a single sideways Joy-Con has no shoulder buttons |
 
