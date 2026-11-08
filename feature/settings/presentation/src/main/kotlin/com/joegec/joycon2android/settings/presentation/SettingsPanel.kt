@@ -37,7 +37,6 @@ fun SettingsPanel(
             color = TextTitle,
             style = MaterialTheme.typography.headlineSmall,
         )
-        KofiBanner()
         SettingsSection {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.sectionSpacing)) {
                 LayoutSetting(state.viewMode, onViewModeChange)

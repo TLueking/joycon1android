@@ -13,8 +13,8 @@ Joycon2Android unchanged: player assignment, button mapping, the Output card and
 
 > [!NOTE]
 > This is an independent fork, not an official Joycon2Android release. Please report Switch 1 issues
-> here, not to the original project. If you find this useful, consider
-> [supporting the original author](https://ko-fi.com/joestechprojects).
+> here, not to the original project. Joycon2Android is the work of JoeGeC; if this app is useful to
+> you, [tip JoeGeC on Ko-fi](https://ko-fi.com/joestechprojects). This fork doesn't take tips.
 
 > [!WARNING]
 > **Switch 2 controllers are untested in this fork.** Joycon2Android's Switch 2 support (Joy-Con 2,
@@ -476,8 +476,9 @@ Built on the community's reverse-engineering work, in particular:
 
 ## License
 
-[GNU General Public License v3.0](LICENSE). If you find this useful, you can support development on
-[Ko-fi](https://ko-fi.com/joestechprojects).
+[GNU General Public License v3.0](LICENSE). Joycon1Android is built on
+[Joycon2Android](https://github.com/JoeGeC/joycon2android) by JoeGeC. To support the original
+author, [tip JoeGeC on Ko-fi](https://ko-fi.com/joestechprojects).
 
 ## Disclaimer
 
