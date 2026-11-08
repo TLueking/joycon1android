@@ -22,6 +22,7 @@ fun SettingsPanel(
     onFasterUpdatesToggle: (Boolean) -> Unit,
     onBlockDeviceMotionToggle: (Boolean) -> Unit,
     onShowTipsToggle: (Boolean) -> Unit,
+    onShowDonationBannerToggle: (Boolean) -> Unit,
     onWarnUnsavedMappingToggle: (Boolean) -> Unit,
     onLaunchOnMainScreenToggle: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -37,7 +38,7 @@ fun SettingsPanel(
             color = TextTitle,
             style = MaterialTheme.typography.headlineSmall,
         )
-        KofiBanner()
+        if (state.showDonationBanner) KofiBanner()
         SettingsSection {
             Column(verticalArrangement = Arrangement.spacedBy(Dimens.sectionSpacing)) {
                 LayoutSetting(state.viewMode, onViewModeChange)
@@ -46,6 +47,13 @@ fun SettingsPanel(
                     description = stringResource(R.string.settings_show_tips_description),
                     checked = state.showTips,
                     onCheckedChange = onShowTipsToggle,
+                    titleStyle = MaterialTheme.typography.titleMedium,
+                )
+                SettingSwitch(
+                    title = stringResource(R.string.settings_show_donation_banner_title),
+                    description = stringResource(R.string.settings_show_donation_banner_description),
+                    checked = state.showDonationBanner,
+                    onCheckedChange = onShowDonationBannerToggle,
                     titleStyle = MaterialTheme.typography.titleMedium,
                 )
                 SettingSwitch(

@@ -115,6 +115,8 @@ class MainActivity : ComponentActivity() {
                     c.setBlockDeviceMotion,
                     c.observeShowTips,
                     c.setShowTips,
+                    c.observeShowDonationBanner,
+                    c.setShowDonationBanner,
                     c.observeLaunchOnMainScreen,
                     c.setLaunchOnMainScreen,
                     c.observeWarnUnsavedMapping,
@@ -316,6 +318,7 @@ class MainActivity : ComponentActivity() {
         val viewMode by viewModel.viewMode.collectAsState()
         val shizukuAvailable by gamepadViewModel.shizukuAvailable.collectAsState()
         val showTips by settingsViewModel.showTips.collectAsState()
+        val showDonationBanner by settingsViewModel.showDonationBanner.collectAsState()
         val warnUnsavedMapping by settingsViewModel.warnUnsavedMapping.collectAsState()
         val launchOnMainScreen by settingsViewModel.launchOnMainScreen.collectAsState()
         val mainScreenLaunchAvailable = remember {
@@ -330,6 +333,7 @@ class MainActivity : ComponentActivity() {
                         outputSettings,
                         shizukuAvailable = shizukuAvailable,
                         showTips = showTips,
+                        showDonationBanner = showDonationBanner,
                         warnUnsavedMapping = warnUnsavedMapping,
                         mainScreenLaunchAvailable = mainScreenLaunchAvailable,
                         launchOnMainScreen = launchOnMainScreen,
@@ -338,6 +342,7 @@ class MainActivity : ComponentActivity() {
                     onFasterUpdatesToggle = settingsViewModel::toggleFasterUpdates,
                     onBlockDeviceMotionToggle = settingsViewModel::toggleBlockDeviceMotion,
                     onShowTipsToggle = settingsViewModel::toggleShowTips,
+                    onShowDonationBannerToggle = settingsViewModel::toggleShowDonationBanner,
                     onWarnUnsavedMappingToggle = settingsViewModel::toggleWarnUnsavedMapping,
                     onLaunchOnMainScreenToggle = settingsViewModel::toggleLaunchOnMainScreen,
                 )

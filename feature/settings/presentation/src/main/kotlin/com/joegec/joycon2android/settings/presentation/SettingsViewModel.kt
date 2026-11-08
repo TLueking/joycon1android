@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joegec.joycon2android.settings.ObserveLaunchOnMainScreenUseCase
 import com.joegec.joycon2android.settings.ObserveOutputSettingsUseCase
+import com.joegec.joycon2android.settings.ObserveShowDonationBannerUseCase
 import com.joegec.joycon2android.settings.ObserveShowTipsUseCase
 import com.joegec.joycon2android.settings.ObserveWarnUnsavedMappingUseCase
 import com.joegec.joycon2android.settings.OutputSettings
 import com.joegec.joycon2android.settings.SetBlockDeviceMotionUseCase
 import com.joegec.joycon2android.settings.SetFasterUpdatesUseCase
 import com.joegec.joycon2android.settings.SetLaunchOnMainScreenUseCase
+import com.joegec.joycon2android.settings.SetShowDonationBannerUseCase
 import com.joegec.joycon2android.settings.SetShowTipsUseCase
 import com.joegec.joycon2android.settings.SetWarnUnsavedMappingUseCase
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,6 +25,8 @@ class SettingsViewModel(
     private val setBlockDeviceMotion: SetBlockDeviceMotionUseCase,
     observeShowTips: ObserveShowTipsUseCase,
     private val setShowTips: SetShowTipsUseCase,
+    observeShowDonationBanner: ObserveShowDonationBannerUseCase,
+    private val setShowDonationBanner: SetShowDonationBannerUseCase,
     observeLaunchOnMainScreen: ObserveLaunchOnMainScreenUseCase,
     private val setLaunchOnMainScreen: SetLaunchOnMainScreenUseCase,
     observeWarnUnsavedMapping: ObserveWarnUnsavedMappingUseCase,
@@ -34,6 +38,10 @@ class SettingsViewModel(
 
     // Off until read, so a player who turned tips off never sees them flash in.
     val showTips: StateFlow<Boolean> = observeShowTips()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), false)
+
+    // Off until read, so a player who hid the banner never sees it flash in.
+    val showDonationBanner: StateFlow<Boolean> = observeShowDonationBanner()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), false)
 
     // Read as .value when an emulator starts, so it can't wait for a subscriber.
@@ -58,6 +66,10 @@ class SettingsViewModel(
 
     fun toggleShowTips(enabled: Boolean) {
         viewModelScope.launch { setShowTips(enabled) }
+    }
+
+    fun toggleShowDonationBanner(enabled: Boolean) {
+        viewModelScope.launch { setShowDonationBanner(enabled) }
     }
 
     fun toggleLaunchOnMainScreen(enabled: Boolean) {

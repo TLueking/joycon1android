@@ -100,6 +100,9 @@ import com.joegec.joycon2android.settings.MainScreenLaunchDataStore
 import com.joegec.joycon2android.settings.MainScreenLaunchRepository
 import com.joegec.joycon2android.settings.ObserveLaunchOnMainScreenUseCase
 import com.joegec.joycon2android.settings.ObserveOutputSettingsUseCase
+import com.joegec.joycon2android.settings.DonationBannerDataStore
+import com.joegec.joycon2android.settings.DonationBannerRepository
+import com.joegec.joycon2android.settings.ObserveShowDonationBannerUseCase
 import com.joegec.joycon2android.settings.ObserveShowTipsUseCase
 import com.joegec.joycon2android.settings.ObserveWarnUnsavedMappingUseCase
 import com.joegec.joycon2android.settings.OutputSettingsDataStore
@@ -108,6 +111,7 @@ import com.joegec.joycon2android.settings.SetBlockDeviceMotionUseCase
 import com.joegec.joycon2android.settings.SetDeviceMotionBlockedUseCase
 import com.joegec.joycon2android.settings.SetFasterUpdatesUseCase
 import com.joegec.joycon2android.settings.SetLaunchOnMainScreenUseCase
+import com.joegec.joycon2android.settings.SetShowDonationBannerUseCase
 import com.joegec.joycon2android.settings.SetShowTipsUseCase
 import com.joegec.joycon2android.settings.SetWarnUnsavedMappingUseCase
 import com.joegec.joycon2android.settings.TipsDataStore
@@ -223,6 +227,10 @@ class AppContainer(context: Context) {
     private val tipsRepository: TipsRepository = TipsDataStore(appContext)
     val observeShowTips = ObserveShowTipsUseCase(tipsRepository)
     val setShowTips = SetShowTipsUseCase(tipsRepository)
+
+    private val donationBannerRepository: DonationBannerRepository = DonationBannerDataStore(appContext)
+    val observeShowDonationBanner = ObserveShowDonationBannerUseCase(donationBannerRepository)
+    val setShowDonationBanner = SetShowDonationBannerUseCase(donationBannerRepository)
 
     private val unsavedMappingWarning: UnsavedMappingWarningRepository = UnsavedMappingWarningDataStore(appContext)
     val observeWarnUnsavedMapping = ObserveWarnUnsavedMappingUseCase(unsavedMappingWarning)
