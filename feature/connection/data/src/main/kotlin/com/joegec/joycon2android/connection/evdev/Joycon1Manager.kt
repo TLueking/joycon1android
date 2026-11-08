@@ -74,16 +74,15 @@ class Joycon1Manager(
         product?.let { turnOff(listOf(it), everyMatch = false) }
     }
 
+    // The relay keeps running, so a controller woken afterwards stays grabbed instead of reaching Android.
     override fun disconnectAll() {
-        turnOff(synchronized(lock) { bySlot.values.map { it.product } }, everyMatch = true)
-        stream?.close()
-        stream = null
-        synchronized(lock) {
-            bySlot.clear()
-            inputs.clear()
+        val products = synchronized(lock) {
+            hidden += bySlot.values.map { it.address }
+            bySlot.values.map { it.product }
         }
         _error.value = null
         rebuild()
+        turnOff(products, everyMatch = true)
     }
 
     override fun setPlayerLed(address: String, player: PlayerNumber?) = Unit
