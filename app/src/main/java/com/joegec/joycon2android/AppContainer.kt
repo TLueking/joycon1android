@@ -2,6 +2,7 @@ package com.joegec.joycon2android
 
 import android.content.Context
 import android.os.SystemClock
+import com.joegec.joycon2android.connection.CombinedControllers
 import com.joegec.joycon2android.connection.ConnectionPriorityRepository
 import com.joegec.joycon2android.connection.ControllerRepository
 import com.joegec.joycon2android.connection.ControllerTypePreferencesDataStore
@@ -14,6 +15,8 @@ import com.joegec.joycon2android.connection.StartScanUseCase
 import com.joegec.joycon2android.connection.StopScanUseCase
 import com.joegec.joycon2android.connection.ViewModePreferences
 import com.joegec.joycon2android.connection.ViewModePreferencesDataStore
+import com.joegec.joycon2android.connection.evdev.Joycon1Manager
+import com.joegec.joycon2android.evdev.ShellEvdevRelayLauncher
 import com.joegec.joycon2android.androidkeys.AndroidKeyRouter
 import com.joegec.joycon2android.androidkeys.DeviceKeysPause
 import com.joegec.joycon2android.androidkeys.HeldKeyRouter
@@ -186,9 +189,17 @@ class AppContainer(context: Context) {
     private val appContext = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    // --- Connection (BLE) ---
-    private val joycon2Manager = Joycon2Manager(appContext, scope, ControllerTypePreferencesDataStore(appContext))
-    val controllerRepository: ControllerRepository = joycon2Manager
+    // --- Connection: Switch 2 over BLE, Switch 1 through evdev ---
+    private val privilegedAccess = PrivilegedAccess()
+    private val controllerTypePreferences = ControllerTypePreferencesDataStore(appContext)
+    private val joycon2Manager = Joycon2Manager(appContext, scope, controllerTypePreferences)
+    private val joycon1Manager = Joycon1Manager(
+        scope,
+        ShellEvdevRelayLauncher(appContext, privilegedAccess::acquire, privilegedAccess::readyShell),
+        controllerTypePreferences,
+        appContext.getString(com.joegec.joycon2android.connection.data.R.string.error_switch1_needs_shizuku),
+    )
+    val controllerRepository: ControllerRepository = CombinedControllers(scope, listOf(joycon2Manager, joycon1Manager))
     private val connectionPriorityRepository: ConnectionPriorityRepository = joycon2Manager
     private val setHighConnectionPriority = SetHighConnectionPriorityUseCase(connectionPriorityRepository)
     val startScan = StartScanUseCase(controllerRepository)
@@ -279,7 +290,6 @@ class AppContainer(context: Context) {
     val assignmentRepository: AssignmentRepository = PlayerAssignmentManager()
 
     // --- Gamepad + privileged access ---
-    private val privilegedAccess = PrivilegedAccess()
     private val gamepadRepository: GamepadRepository =
         GamepadOutput(
             scope,

@@ -47,7 +47,7 @@ plugins in `build-logic/convention/` ([which to use](adding-a-feature.md#the-con
 - **use cases** — one-line wrappers, invoked as `useCase(args)` via an `operator fun invoke`
 - domain-only transforms (e.g. `SideInference`, `ComboAssignmentDetector`)
 
-**`data`** — the repository **implementations** and everything they need: BLE/GATT, the UHID
+**`data`** — the repository **implementations** and everything they need: BLE/GATT, the Switch 1 evdev source ([switch1.md](switch1.md)), the UHID
 and uinput relays, the DSU UDP server, byte/wire parsers, framework access. Depends only on its own domain.
 
 **`presentation`** — the feature's `ViewModel` and Compose UI. Depends only on its own domain

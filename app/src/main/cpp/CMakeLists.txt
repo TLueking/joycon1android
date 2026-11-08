@@ -16,3 +16,10 @@ set_target_properties(uinput_relay PROPERTIES
     SUFFIX ".so"
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
 )
+
+add_executable(evdev_relay evdev_relay.c)
+set_target_properties(evdev_relay PROPERTIES
+    OUTPUT_NAME "libevdev_relay"
+    SUFFIX ".so"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+)

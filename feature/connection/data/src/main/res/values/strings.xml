@@ -5,5 +5,6 @@
     <string name="error_ble_registration_failed">BLE app registration failed</string>
     <string name="error_ble_unsupported">BLE scanning not supported</string>
     <string name="error_ble_internal">Internal BLE error</string>
+    <string name="error_switch1_needs_shizuku">Switch 1 controllers need Shizuku. Start Shizuku and grant this app access, then scan again.</string>
     <string name="error_scan_failed">Scan failed (code %1$d)</string>
 </resources>
