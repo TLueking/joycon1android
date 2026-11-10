@@ -19,10 +19,7 @@ import java.lang.reflect.Method
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-/**
- * Asks the controller to sleep through the HID host; failing that, calls the host's disconnect through
- * Shizuku, which needs BLUETOOTH_PRIVILEGED (root, not shell). docs/switch1.md#turning-off
- */
+/** Disconnects through Shizuku, else sends the controller the sleep command. docs/switch1.md#turning-off */
 class HidHostDisconnector(
     private val context: Context,
     private val shellReady: () -> Boolean,
@@ -60,7 +57,7 @@ class HidHostDisconnector(
                 Log.w(TAG, "${matches.size} connected named ${product.bluetoothName}")
                 return false
             }
-            matches.all { sendSleep(host, it) || disconnectThroughShizuku(host, it) }
+            matches.all { disconnectThroughShizuku(host, it) || sendSleep(host, it) }
         } catch (e: InvocationTargetException) {
             Log.e(TAG, "HID host refused the disconnect", e.targetException)
             false
@@ -91,19 +88,30 @@ class HidHostDisconnector(
     }
 
     // Output report 0x01: packet 0, neutral rumble, subcommand 0x06 (set HCI state) 0x00 (disconnect).
-    private fun sendSleep(host: BluetoothProfile, device: BluetoothDevice): Boolean = try {
-        val sendData = host.javaClass.getMethod("sendData", BluetoothDevice::class.java, String::class.java)
-        val sent = sendData.invoke(host, device, SLEEP_REPORT) == true
-        Log.i(TAG, "Sleep command to ${device.address}: $sent")
-        sent
-    } catch (e: InvocationTargetException) {
-        Log.w(TAG, "Sleep command refused", e.targetException)
-        false
+    private fun sendSleep(host: BluetoothProfile, device: BluetoothDevice): Boolean {
+        if (!SLEEP_COMMAND_SAFE) return false.also { Log.w(TAG, "No sleep command on this Android version") }
+        return try {
+            val sendData = host.javaClass.getMethod("sendData", BluetoothDevice::class.java, String::class.java)
+            val sent = sendData.invoke(host, device, SLEEP_REPORT) == true
+            Log.i(TAG, "Sleep command to ${device.address}: $sent")
+            sent
+        } catch (e: InvocationTargetException) {
+            Log.w(TAG, "Sleep command refused", e.targetException)
+            false
+        }
     }
 
     private fun disconnectThroughShizuku(host: BluetoothProfile, device: BluetoothDevice): Boolean {
         if (!shellReady()) return false.also { Log.w(TAG, "Shizuku not ready") }
-        return disconnectAsShell(shellService(host), device)
+        return try {
+            disconnectAsShell(shellService(host), device)
+        } catch (e: InvocationTargetException) {
+            Log.w(TAG, "Disconnect as shell refused", e.targetException)
+            false
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Disconnect as shell refused", e)
+            false
+        }
     }
 
     // IBluetoothHidHost.Stub.asInterface over a binder whose calls Shizuku makes as shell.
@@ -141,5 +149,8 @@ class HidHostDisconnector(
         const val SHELL_UID = 2000
         const val SHELL_PACKAGE = "com.android.shell"
         const val SLEEP_REPORT = "010000014040000140400600"
+
+        // Android 15's HidHostService.sendData crashes the Bluetooth process.
+        val SLEEP_COMMAND_SAFE = Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM
     }
 }
