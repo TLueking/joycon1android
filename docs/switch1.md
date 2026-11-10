@@ -68,24 +68,31 @@ The driver applies factory calibration and reports ±32767, up negative. `EvdevS
 ## Turning off
 
 The ⏻ button on a player card, **Disconnect** on an unassigned controller and **Disconnect all**
-put Switch 1 controllers to sleep, as a Switch does. A button press wakes one and it reconnects to the
-phone without re-pairing (Pixel 3a, Android 12, 2026-11-08).
+turn Switch 1 controllers off. A button press wakes one and it reconnects to the phone without
+re-pairing (Pixel 3a: Android 12 with the sleep command, 2026-11-08; LineageOS 22 with the Shizuku
+disconnect, 2026-11-09).
 
 | Class | Module | Role |
 |---|---|---|
 | `EvdevDisconnector` | `:feature:connection:data` | What `Joycon1Manager` calls per product |
-| `HidHostDisconnector` | `:app` | Sends the sleep command; falls back to a disconnect through Shizuku |
+| `HidHostDisconnector` | `:app` | Disconnects through Shizuku; falls back to the sleep command |
 
-**Sleep command.** `BluetoothHidHost.sendData` (hidden, reached by reflection) with the app's own
-`BLUETOOTH_CONNECT` sends output report `01 00 00014040 00014040 06 00`: packet 0, neutral rumble,
-subcommand `0x06` (set HCI state) `0x00` (disconnect). The controller drops the link itself. Worked on a
-Pixel 3a (Android 12), both Joy-Cons, 2026-11-08.
+**Disconnect through Shizuku.** The HID host's `disconnect` (hidden, by reflection) is called through
+`ShizukuBinderWrapper` with a `com.android.shell` `AttributionSource`. It needs `BLUETOOTH_PRIVILEGED`:
+shell has it on Android 15, and the Joy-Cons go to sleep when the host drops the link (Pixel 3a,
+LineageOS 22, 2026-11-09). Shell lacks it on Android 12 (`Neither user 2000 nor current process has
+android.permission.BLUETOOTH_PRIVILEGED`), so the call is refused there. `app_process` as shell can't
+bind the service at all (`Unable to find app for caller`).
 
-**Disconnect fallback.** The HID host's `disconnect` needs `BLUETOOTH_PRIVILEGED`, which shell lacks
-(`Neither user 2000 nor current process has android.permission.BLUETOOTH_PRIVILEGED`, same device).
-It's called through `ShizukuBinderWrapper` with a `com.android.shell` `AttributionSource`, so it only
-helps where Shizuku runs as root. `app_process` as shell can't bind the service at all
-(`Unable to find app for caller`).
+**Sleep command fallback, Android 14 and older.** `BluetoothHidHost.sendData` (hidden, reflection) with
+the app's own `BLUETOOTH_CONNECT` sends output report `01 00 00014040 00014040 06 00`: packet 0,
+neutral rumble, subcommand `0x06` (set HCI state) `0x00` (disconnect). The controller drops the link
+itself. Worked on a Pixel 3a (Android 12), both Joy-Cons, 2026-11-08.
+
+Not on Android 15: with the Bluetooth flag `allow_switching_hid_and_hogp` on, `sendData` posts the
+`BluetoothDevice` but `handleMessageSendData` casts it to `byte[]`, and the `ClassCastException` restarts
+the Bluetooth process. `setReport` doesn't crash, but a Joy-Con ignores subcommands sent as a
+control-channel SET_REPORT (LineageOS 22, 2026-11-09).
 
 evdev doesn't expose the Bluetooth address, so the device is matched by its advertised name
 (`EvdevProduct.bluetoothName`). With two of the same type connected, a single turn-off refuses and

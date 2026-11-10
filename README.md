@@ -78,7 +78,7 @@ Android has closed the app, a woken Joy-Con acts as a normal Android controller.
 
 Good to know:
 
-- Turning off works without Shizuku; it only needs the Bluetooth permission the app already has.
+- Turning off uses Shizuku on Android 15 and newer. On older Android it also works without Shizuku.
 - If you've connected two Joy-Cons of the same side, the ⏻ and ✕ buttons can't tell them apart and
   won't turn either off. **Disconnect All** still turns off both.
 - If the app says it couldn't turn a controller off, disconnect it in Android's Bluetooth settings
